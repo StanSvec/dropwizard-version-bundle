@@ -14,7 +14,7 @@ import java.util.SortedMap;
 import java.util.regex.Pattern;
 import org.reflections.Configuration;
 import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
+import org.reflections.scanners.Scanners;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
@@ -43,7 +43,7 @@ public class MavenVersionSupplier implements VersionSupplier {
   public MavenVersionSupplier(String mainArtifactGroupId, String mainArtifactId) {
     Configuration config = new ConfigurationBuilder()
         .setUrls(ClasspathHelper.forJavaClassPath())
-        .addScanners(new ResourcesScanner());
+        .addScanners(Scanners.Resources);
 
     Set<String> paths = new Reflections(config).getResources(POM_PROPERTIES);
     for (String path : paths) {

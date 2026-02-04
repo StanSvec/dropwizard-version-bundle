@@ -4,7 +4,7 @@
 
   <groupId>io.dropwizard-bundles</groupId>
   <artifactId>dropwizard-version-bundle</artifactId>
-  <version>4.0.0</version>
+  <version>5.0.0</version>
   <packaging>jar</packaging>
 
   <name>dropwizard-version-bundle</name>
@@ -32,8 +32,8 @@
   </developers>
 
   <properties>
-    <reflections.version>0.9.11</reflections.version>
-    <dw.version>4.0.2</dw.version>
+    <reflections.version>0.10.2</reflections.version>
+    <dropwizard.version>5.0.1</dropwizard.version>
   </properties>
 
   <build>
@@ -41,34 +41,52 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.11.0</version>
+        <version>3.14.0</version>
         <configuration>
-          <release>16</release>
-          <forceJavacCompilerUse>true</forceJavacCompilerUse>
+          <release>25</release>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.5.3</version>
+        <configuration>
+          <argLine>
+            -Dnet.bytebuddy.experimental=true
+            --add-opens java.base/java.lang=ALL-UNNAMED
+            --add-opens java.base/java.lang.reflect=ALL-UNNAMED
+          </argLine>
         </configuration>
       </plugin>
     </plugins>
   </build>
+  <distributionManagement>
+        <repository>
+            <id>nexus</id>
+            <url>http://repo.taggstar.net/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus</id>
+            <url>http://repo.taggstar.net/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
   <dependencies>
     <dependency>
       <groupId>io.dropwizard</groupId>
       <artifactId>dropwizard-core</artifactId>
-      <version>${dw.version}</version>
+      <version>${dropwizard.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.reflections</groupId>
       <artifactId>reflections</artifactId>
-      <version>0.9.11</version> <!-- Warning: Do not upgrade the library otherwise the extension will stop working -->
+      <version>${reflections.version}</version>
 
       <!--
-        Don't include the annotations.jar, it contains the annotations defined in javax.annotation
-        as part of JSR 305.  Dropwizard however already comes with a different, more up to date
-        JSR 305 jar, so these classes will be in the classpath already.  Since this is a dropwizard
-        bundle codebase, we defer to the version that Dropwizard provides in order to prevent
-        conflicts during shading into a Dropwizard uber-jar.
+        Don't include the annotations.jar to avoid classpath conflicts with
+        annotations that Dropwizard provides.
       -->
       <exclusions>
         <exclusion>
@@ -81,20 +99,28 @@
     <dependency>
       <groupId>io.dropwizard</groupId>
       <artifactId>dropwizard-testing</artifactId>
-      <version>${dw.version}</version>
+      <version>${dropwizard.version}</version>
       <scope>test</scope>
     </dependency>
+
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.13.2</version>
+      <groupId>org.eclipse.jetty.ee10</groupId>
+      <artifactId>jetty-ee10-servlet</artifactId>
+      <version>12.1.6</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>5.12.2</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>5.2.0</version>
+      <version>5.17.0</version>
       <scope>test</scope>
     </dependency>
 
